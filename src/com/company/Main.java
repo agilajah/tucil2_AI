@@ -3,36 +3,48 @@ package com.company;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
-
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Discretize;
 
 import java.util.Scanner;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 
 
 public class Main {
 
     public static void main(String[] args) throws Exception{
-	    //DataSource source = new DataSource("/dataset/something.arff");
-        //Instances data = source.getDataSet();
-        //if (data.classIndex() == -1)
-        //    data.setClassIndex(data.numAttributes() - 1);
 
         //create the scanner
         Scanner terminalInput = new Scanner(System.in);
         System.out.println("Masukkan nama file : ");
         //read filename
         String namafile = terminalInput.nextLine();
-        Instances dataset = new Instances(new BufferedReader(new FileReader("/home/agilajah/IdeaProjects/iristucil2_AI/dataset/" + namafile + ".arff")));
 
+        DataSource source = new DataSource("/home/agilajah/IdeaProjects/tucil2_AI/dataset/" + namafile + "-copy.arff");
+        Instances dataset = source.getDataSet();
+        dataset.setClassIndex(dataset.numAttributes() - 1);
+
+        //set options
+        String[] options = new String[4];
+        //choose the number of intervals, e.g 2:
+        options[0] = "-B";
+        options[1] = "5";
+        //choose the range of attributes on which to apply the filter:
+        options[2] = "-R";
+        options[3] = "first-last";
+
+        //Apply Discretization
+        Discretize discretize = new Discretize();
+        discretize.setOptions(options);
+        discretize.setInputFormat(dataset);
+        Instances newData = Filter.useFilter(dataset, discretize);
 
         System.out.println(dataset.toSummaryString());
 
         ArffSaver saver =  new ArffSaver();
-        saver.setInstances(dataset);
-        saver.setFile(new File("/home/agilajah/IdeaProjects/tucil2_AI/dataset/" + namafile + "-copy.arff"));
+        saver.setInstances(newData);
+        saver.setFile(new File("/home/agilajah/IdeaProjects/tucil2_AI/dataset/" + namafile + "-copy2.arff"));
         saver.writeBatch();
 
     }
