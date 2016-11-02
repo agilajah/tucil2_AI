@@ -1,3 +1,10 @@
+/* Author : Febi Agil Ifdillah (febiagil20@gmail.com)
+            Ahmad Farhan Ghifari
+
+   Informatics/Computer Science
+   Institut Teknologi Bandung (2016)
+ */
+
 package com.company;
 
 
@@ -276,6 +283,9 @@ public class Main {
         } else {
             // asking for existing model
             modelInteractive();
+            System.out.println(usedEvaluation.toClassDetailsString());
+            System.out.println();
+            System.out.println();
             System.out.println("Wanna test with new instance? (Yes/No)");
             String yesno = terminalInput.nextLine();
             String tempyesno = yesno.toLowerCase();
@@ -283,7 +293,7 @@ public class Main {
                 addNewInstance();
             }
 
-            System.out.println(usedEvaluation.toClassDetailsString());
+
         }
 
 
