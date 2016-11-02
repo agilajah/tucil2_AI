@@ -23,7 +23,7 @@ public class Main {
 
     static Instances dataSet;
     static Instances newDataSet;
-    static Instances dataTest;
+    static Evaluation usedEvaluation;
     static J48 tree;
 
     public static Instances applyFilter(Instances dataSet) throws Exception {
@@ -70,14 +70,8 @@ public class Main {
         Instances randData = new Instances(newDataSet);
         randData.randomize(rand);
 
-        //stratify
-        if (randData.classAttribute().isNominal()) {
-            randData.stratify(folds);
-        }
-
-
         Evaluation eval = new Evaluation(randData);
-        eval.crossValidateModel(tree, randData, 10, rand);
+        eval.crossValidateModel(tree, randData, folds, rand);
 
         return eval;
     }
@@ -170,9 +164,9 @@ public class Main {
             loadData();
             System.out.println("Dataset loaded.");
             if (trainingMethodInteractive() == 1) {
-                crossValidation(newDataSet, tree);
+                usedEvaluation = crossValidation(newDataSet, tree);
             } else
-                full_training(newDataSet, tree);
+                usedEvaluation = full_training(newDataSet, tree);
 
         } else { // if user has no existing model
             System.out.println();
@@ -244,6 +238,7 @@ public class Main {
         System.out.println(instance1);
         instance1.setDataset(newDataSet);
         int classify1 = (int) tree.classifyInstance(instance1);
+        System.out.print("Prediction Class : ");
         System.out.println(classVal.get(classify1));
     }
 
@@ -281,7 +276,14 @@ public class Main {
         } else {
             // asking for existing model
             modelInteractive();
-            addNewInstance();
+            System.out.println("Wanna test with new instance? (Yes/No)");
+            String yesno = terminalInput.nextLine();
+            String tempyesno = yesno.toLowerCase();
+            if (yesno.equals("yes")) {
+                addNewInstance();
+            }
+
+            System.out.println(usedEvaluation.toClassDetailsString());
         }
 
 
