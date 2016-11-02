@@ -32,6 +32,11 @@ public class Main {
     static Instances newDataSet;
     static Evaluation usedEvaluation;
     static J48 tree;
+    static int filterr = 0;
+    static String filteractive;
+    static String metode;
+    static String fileactive;
+    static String existingmodels;
 
     public static Instances applyFilter(Instances dataSet) throws Exception {
         //set options
@@ -101,15 +106,22 @@ public class Main {
     public static void filterInteractive() throws Exception {
         //create the scanner
         Scanner terminalInput = new Scanner(System.in);
-
+        System.out.println("====================================");
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
+        System.out.println("====================================");
         System.out.println("Want to use filter? (Yes/No)");
         String chooseFilter = terminalInput.nextLine();
         String tempChoose = chooseFilter.toLowerCase();
         if (tempChoose.equals("yes") || tempChoose.equals("y")) {
             System.out.println("Filter activated.");
+            filterr = 1;
+            filteractive = new String("Active");
+
             newDataSet = applyFilter(dataSet);
         } else {
             newDataSet = dataSet;
+            filteractive = new String("Not Active");
             System.out.println("Filter not activated.");
         }
         // make a class from last attribute
@@ -124,6 +136,10 @@ public class Main {
         Scanner terminalInput = new Scanner(System.in);
 
         System.out.println();
+        System.out.println("====================================");
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
+        System.out.println("====================================");
         System.out.println("Choose appropriate training method : ");
         System.out.println("1. 10 Folds Cross Validation");
         System.out.println("2. Full-Training");
@@ -136,9 +152,11 @@ public class Main {
         }
 
         if (chooseMethods.equals("1")) {
+            metode = new String("CrossValidation");
             return 1;
         } else {
             if (chooseMethods.equals("2")) {
+                metode = new String("Full-training");
                 return 2;
             }
         }
@@ -154,6 +172,11 @@ public class Main {
 
 
         // check whether user has model or not
+        System.out.println();
+        System.out.println("====================================");
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
+        System.out.println("====================================");
         System.out.println("Wanna input your model? (Yes/No)");
         String modelName = terminalInput.nextLine();
         String tempChoose = modelName.toLowerCase();
@@ -163,12 +186,17 @@ public class Main {
             System.out.println("|                       Model Loader                            ");
             System.out.println("----------------------------------------------------------------");
             System.out.println();
+            System.out.println();
+            System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+            System.out.println("[Model: " + existingmodels + "]");
             System.out.print("Input your model filename : ");
             String modelFileName = terminalInput.nextLine();
             tree = (J48) loadModel(modelFileName);
+            existingmodels = new String(modelFileName);
             System.out.println("Model succesfully loaded.");
             System.out.println(tree);
-            loadData();
+            //loadData();
+            filterInteractive();
             System.out.println("Dataset loaded.");
             if (trainingMethodInteractive() == 1) {
                 usedEvaluation = crossValidation(newDataSet, tree);
@@ -177,8 +205,11 @@ public class Main {
 
         } else { // if user has no existing model
             System.out.println();
-            loadData();
+
             System.out.println("Dataset loaded.");
+
+            //loadData();
+            filterInteractive();
             //building classifier model
             baseClassifier();
             System.out.println("----------------------------------------------------------------");
@@ -187,6 +218,11 @@ public class Main {
             System.out.println();
             System.out.println("Model successfully built.");
             System.out.println();
+            System.out.println();
+            System.out.println("====================================");
+            System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+            System.out.println("[Model: " + existingmodels + "]");
+            System.out.println("====================================");
             System.out.println("Want to save model? (Yes/No)");
 
             String chooseSaveModel = terminalInput.nextLine();
@@ -221,6 +257,11 @@ public class Main {
     public static void addNewInstance() throws Exception {
         //create the scanner
         Scanner terminalInput = new Scanner(System.in);
+        System.out.println();
+        System.out.println("====================================");
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
+        System.out.println("====================================");
         System.out.println("Write down your new instance : ");
 
         ArrayList<Attribute> atts = new ArrayList<Attribute>();
@@ -240,10 +281,18 @@ public class Main {
         for (int i=0; i < dataSet.numAttributes()-1;i++) {
             attValues[i] = terminalInput.nextDouble();
         }
+        Discretize discretize = new Discretize();
+        String s = terminalInput.nextLine();
 
         Instance instance1 = new DenseInstance(1.0, attValues);
-        System.out.println(instance1);
+
+
         instance1.setDataset(newDataSet);
+        if (filterr == 1) {
+            discretize.setInputFormat(dataSet);
+            discretize.input(instance1);
+        }
+        System.out.println(instance1);
         int classify1 = (int) tree.classifyInstance(instance1);
         System.out.print("Prediction Class : ");
         System.out.println(classVal.get(classify1));
@@ -253,13 +302,20 @@ public class Main {
 
         //create the scanner
         Scanner terminalInput = new Scanner(System.in);
-
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
         System.out.println("Input dataset file name: ");
         //read filename
         String namafile = terminalInput.nextLine();
+        fileactive = new String(namafile);
 
+        System.out.println();
+        System.out.println("====================================");
+        System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+        System.out.println("[Model: " + existingmodels + "]");
+        System.out.println("====================================");
         System.out.println("Pilih menu: ");
-        System.out.println("1. Gunakan Filter");
+        System.out.println("1. Ujicoba Filter");
         System.out.println("2. Training - Uji");
         //read menu
         String menu = terminalInput.nextLine();
@@ -286,6 +342,8 @@ public class Main {
             System.out.println(usedEvaluation.toClassDetailsString());
             System.out.println();
             System.out.println();
+            System.out.println("[File:" + fileactive + "]" + "[Filter: " + filteractive + "]" + "[Method:" + metode + "]");
+            System.out.println("[Model: " + existingmodels + "]");
             System.out.println("Wanna test with new instance? (Yes/No)");
             String yesno = terminalInput.nextLine();
             String tempyesno = yesno.toLowerCase();
@@ -295,6 +353,6 @@ public class Main {
 
 
         }
-        
+
     }
 }
