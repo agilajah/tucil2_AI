@@ -208,9 +208,9 @@ public class Main {
             System.out.println(tree);
             //filterInteractive();
             if (trainingMethodInteractive() == 1) {
-                crossValidation(newDataSet, tree);
+                usedEvaluation = crossValidation(newDataSet, tree);
             } else
-                full_training(newDataSet, tree);
+                usedEvaluation = full_training(newDataSet, tree);
 
         }
 
