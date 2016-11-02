@@ -289,14 +289,12 @@ public class Main {
             System.out.println("Wanna test with new instance? (Yes/No)");
             String yesno = terminalInput.nextLine();
             String tempyesno = yesno.toLowerCase();
-            if (yesno.equals("yes")) {
+            if (tempyesno.equals("yes")) {
                 addNewInstance();
             }
 
 
         }
-
-
-
+        
     }
 }
