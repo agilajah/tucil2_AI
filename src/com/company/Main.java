@@ -13,7 +13,6 @@ import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 
 import java.util.Scanner;
-import java.io.File;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -252,6 +251,14 @@ public class Main {
         //read filename
         String namafile = terminalInput.nextLine();
 
+        System.out.println("Pilih menu: ");
+        System.out.println("1. Gunakan Filter");
+        System.out.println("2. Training - Uji");
+        //read menu
+        String menu = terminalInput.nextLine();
+        String temp_menu = menu.toLowerCase();
+
+
         DataSource source = new DataSource("/home/agilajah/IdeaProjects/tucil2_AI/dataset/" + namafile + ".arff");
         dataSet = source.getDataSet();
         // make a class from last attribute
@@ -262,9 +269,17 @@ public class Main {
         // create base classifier
         tree = new J48();
 
-        // asking for existing model
-        modelInteractive();
-        addNewInstance();
+
+        if (temp_menu.equals("1")) {
+            filterInteractive();
+            System.out.println(newDataSet.toSummaryString());
+        } else {
+            // asking for existing model
+            modelInteractive();
+            addNewInstance();
+        }
+
+
 
     }
 }
