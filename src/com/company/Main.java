@@ -93,6 +93,9 @@ public class Main {
         return loader;
     }
 
+    public static void loadData() throws Exception {
+        newDataSet = dataSet;
+    }
 
     public static void filterInteractive() throws Exception {
         //create the scanner
@@ -164,7 +167,8 @@ public class Main {
             tree = (J48) loadModel(modelFileName);
             System.out.println("Model succesfully loaded.");
             System.out.println(tree);
-            filterInteractive();
+            loadData();
+            System.out.println("Dataset loaded.");
             if (trainingMethodInteractive() == 1) {
                 crossValidation(newDataSet, tree);
             } else
@@ -172,7 +176,8 @@ public class Main {
 
         } else { // if user has no existing model
             System.out.println();
-            filterInteractive();
+            loadData();
+            System.out.println("Dataset loaded.");
             //building classifier model
             baseClassifier();
             System.out.println("----------------------------------------------------------------");
